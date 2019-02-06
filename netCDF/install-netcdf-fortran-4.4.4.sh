@@ -33,14 +33,17 @@ ramdisk=/tmp/ramdisk-$pkg
 required=" \
   $HOME/.script/env-cmake-3.11.2.sh \
   $HOME/.script/env-zlib-1.2.11.sh \
-  $HOME/.script/env-hdf5-1.10.2.sh \
+  $HOME/.script/env-hdf5-1.10.4-openmpi-parallel.sh \
   $HOME/.script/env-curl-7.60.0.sh \
   $HOME/.script/env-openssl-1.1.0.sh \
   $HOME/.script/env-netcdf-4.6.1.sh \
+  $HOME/.script/env-openmpi-4.0.0.sh \
 "
 
 # Compilation flags
 cflag=
+export CPPFLAGS=-I$HOME/.pkg/netcdf-4.6.1/include 
+export LDFLAGS=-L$HOME/.pkg/netcdf-4.6.1/lib
 
  #}}}
 ####{{{ variable
@@ -145,8 +148,6 @@ cm "tar zxf $zip" "untar $zip"
 # ================================================= build
 echo Building $pkg...
 cd $src
-export CPPFLAGS=-I$HOME/.pkg/netcdf-4.6.1/include 
-export LDFLAGS=-L$HOME/.pkg/netcdf-4.6.1/lib
 cm "env CFLAGS=$cflag CXXFLAGS=$cflag FFLAGS=$cflag FCFLAGS=$cflag ./configure --prefix=$td" "configure $pkg"
 cm "make" "build $pkg"
 

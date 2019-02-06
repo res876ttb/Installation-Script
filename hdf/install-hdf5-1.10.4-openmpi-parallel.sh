@@ -3,16 +3,17 @@
 ####{{{ parameter
 
 # package name and its version
-pkg=openmpi-3.1.0
+pkg=hdf5-1.10.4-openmpi-parallel
+src=hdf5-hdf5-1_10_4
 
 # url of source code
-url=https://download.open-mpi.org/release/open-mpi/v3.1/openmpi-3.1.0.tar.gz
+url=https://github.com/live-clones/hdf5/archive/hdf5-1_10_4.tar.gz
 
 # name of downloaded file
-zip=$pkg.tar.gz
+zip=hdf5-1_10_4.tar.gz
 
 # target directory
-td=$HOME/.pkg/openmpi-3.1.0
+td=$HOME/.pkg/$pkg
 
 # script path
 sp=$HOME/.script/env-$pkg.sh
@@ -26,12 +27,19 @@ env="\
 "
 
 # ramdisk path
-ramdisk=/tmp/ramdisk-$pkg
+ramdisk=/tmp/ramdisk-$pkg-openmpi-parallel
 
-# compiler flags
-cflag=
+# scripts of required packages
+required="
+  $HOME/.script/env-cmake-3.11.2.sh \
+  $HOME/.script/env-zlib-1.2.11.sh \
+  $HOME/.script/env-openmpi-4.0.0.sh \
+"
 
-#}}}
+# compilation flag
+# cflag=-fPIC
+
+ #}}}
 ####{{{ variable
 
 clearmode=0
@@ -85,13 +93,23 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+# ================================================= set environment
+for i in $required; do
+  if [ ! -f $i ]; then
+    echo File $i not exists!
+    exit -1
+  fi
+  echo source $i
+  source $i
+done
+
 # ================================================= remove log file
 rm -rf log
 
 # ================================================= clear option
 if [ $clearmode -gt 0 ]; then
   echo Clearing environment, script, and target directory...
-  rm -rf $pkg $sp $td ~/$pkg.log $ramdisk
+  rm -rf $pkg $src $sp $td ~/$pkg.log $ramdisk
   exit
 fi
 
@@ -111,15 +129,17 @@ cd $ramdisk
 
 # ================================================= unzip
 echo Unzipping $pkg...
-rm -rf $pkg
-tar zxf $zip
+rm -rf $src
+cm "tar zxf $zip" "untar $zip"
 
 # ================================================= build
 echo Building $pkg...
-cd $pkg/
-# cm "./configure --prefix=$td CFLAGS=$cflag CXXFLAGS=$cflag FFLAGS=$cflag FCFLAGS=$cflag" "configure $pkg"
-cm "./configure --prefix=$td CFLAGS=$cflag CXXFLAGS=$cflag FFLAGS=$cflag FCFLAGS=$cflag" "configure $pkg"
+cd $src
+cm "env CC=mpicc CXX=mpicxx FC=mpifort CFLAGS=$cflag CXXFLAGS=$cflag FFLAGS=$cflag FCFLAGS=$cflag ./configure --enable-parallel --enable-fortran --enable-cxx --enable-unsupported --enable-optimization=high --prefix=$td" "configure $pkg"
 cm "make -j16" "build $pkg"
+
+# ================================================= install
+echo Installing $pkg
 cm "make install" "install $pkg"
 
 # ================================================= clear environment

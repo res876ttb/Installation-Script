@@ -3,16 +3,16 @@
 ####{{{ parameter
 
 # package name and its version
-pkg=openmpi-3.1.0
+pkg=openmpi-4.0.0
 
 # url of source code
-url=https://download.open-mpi.org/release/open-mpi/v3.1/openmpi-3.1.0.tar.gz
+url=https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.0.tar.gz
 
 # name of downloaded file
-zip=$pkg.tar.gz
+zip=openmpi-4.0.0.tar.gz
 
 # target directory
-td=$HOME/.pkg/openmpi-3.1.0
+td=$HOME/.pkg/$pkg
 
 # script path
 sp=$HOME/.script/env-$pkg.sh
@@ -118,7 +118,7 @@ tar zxf $zip
 echo Building $pkg...
 cd $pkg/
 # cm "./configure --prefix=$td CFLAGS=$cflag CXXFLAGS=$cflag FFLAGS=$cflag FCFLAGS=$cflag" "configure $pkg"
-cm "./configure --prefix=$td CFLAGS=$cflag CXXFLAGS=$cflag FFLAGS=$cflag FCFLAGS=$cflag" "configure $pkg"
+cm "./configure --prefix=$td --enable-mpi1-compatibility CFLAGS=$cflag CXXFLAGS=$cflag FFLAGS=$cflag FCFLAGS=$cflag" "configure $pkg"
 cm "make -j16" "build $pkg"
 cm "make install" "install $pkg"
 

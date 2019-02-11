@@ -3,30 +3,31 @@
 ####{{{ parameter
 
 # package name and its version
-pkg=hdf5-1.10.2
-src=hdf5-hdf5-1_10_2
+pkg=hdf5-1.10.4-intelmpi-parallel
+src=hdf5-hdf5-1_10_4
 
 # url of source code
-url=https://github.com/live-clones/hdf5/archive/hdf5-1_10_2.tar.gz
+url=https://github.com/live-clones/hdf5/archive/hdf5-1_10_4.tar.gz
 
 # name of downloaded file
-zip=hdf5-1_10_2.tar.gz
+zip=hdf5-1_10_4.tar.gz
 
 # target directory
-td=$HOME/.pkg/hdf5-1.10.2-intelmpi
+td=$HOME/.pkg/$pkg
 
 # script path
-sp=$HOME/.script/env-$pkg-intelmpi.sh
+sp=$HOME/.script/env-$pkg.sh
 
 # environment script
 env="\
   export PATH=$td/bin:\$PATH \
   export LD_LIBRARY_PATH=$td/lib:\$LD_LIBRARY_PATH \
   export INCLUDE=$td/include:\$INCLUDE \
+  export CPATH=$td/include:\$CPATH \
 "
 
 # ramdisk path
-ramdisk=/tmp/ramdisk-$pkg-intel
+ramdisk=/tmp/ramdisk-$pkg
 
 # scripts of required packages
 required="
@@ -36,12 +37,7 @@ required="
 "
 
 # compilation flag
-export CC=gcc
-export FC=gfortran
-export CXX=g++
-export CFLAGS='-O3 -xHost -ip'
-export CXXFLAGS='-O3 -xHost -ip'
-export FCFLAGS='-O3 -xHost -ip'
+# cflag=-fPIC
 
  #}}}
 ####{{{ variable
@@ -139,7 +135,7 @@ cm "tar zxf $zip" "untar $zip"
 # ================================================= build
 echo Building $pkg...
 cd $src
-cm "./configure --enable-fortran --enable-cxx --enable-unsupported --enable-optimization=high --prefix=$td" "configure $pkg"
+cm "env CC=mpiicc CXX=mpiicpc FC=mpiifort CFLAGS=$cflag CXXFLAGS=$cflag FFLAGS=$cflag FCFLAGS=$cflag ./configure --enable-parallel --enable-fortran --enable-build-mode=production --enable-optimization=high --prefix=$td" "configure $pkg"
 cm "make -j16" "build $pkg"
 
 # ================================================= install

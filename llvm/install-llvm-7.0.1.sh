@@ -138,7 +138,7 @@ echo Building $pkg...
 cd $src
 mkdir build
 cd build
-cm "cmake ../llvm -DCMAKE_INSTALL_PREFIX=$td"
+cmake ../llvm -DLLVM_ENABLE_PROJECTS=clang -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=$td
 cm "make -j24" "build $pkg"
 
 # ================================================= check build

@@ -3,14 +3,14 @@
 ####{{{ parameter
 
 # package name and its version
-pkg=netcdf-fortran-4.4.4-openmpi-intel
-src=netcdf-fortran-4.4.4
+pkg=hdf5-1.10.4-openmpi-intel-parallel
+src=hdf5-hdf5-1_10_4
 
 # url of source code
-url=ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.4.tar.gz
+url=https://github.com/live-clones/hdf5/archive/hdf5-1_10_4.tar.gz
 
 # name of downloaded file
-zip=netcdf-fortran-4.4.4.tar.gz
+zip=hdf5-1_10_4.tar.gz
 
 # target directory
 td=$HOME/.pkg/$pkg
@@ -30,30 +30,20 @@ env="\
 ramdisk=/tmp/ramdisk-$pkg
 
 # scripts of required packages
-required=" \
+required="
   $HOME/.script/env-intel.sh \
   $HOME/.script/env-zlib-1.2.11.sh \
-  $HOME/.script/env-hdf5-1.10.4-openmpi-intel-parallel.sh \
-  $HOME/.script/env-curl-7.60.0.sh \
-  $HOME/.script/env-openssl-1.1.0.sh \
-  $HOME/.script/env-netcdf-4.6.2-openmpi-intel.sh \
   $HOME/.script/env-openmpi-3.1.3-intel.sh \
 "
 
-# Compilation flags
-cflag=
-export CPPFLAGS=-I$HOME/.pkg/netcdf-4.6.2-openmpi-intel/include 
-export LDFLAGS=-L$HOME/.pkg/netcdf-4.6.2-openmpi-intel/lib
-export CC=mpicc
-export CXX=mpicxx
-export FC=mpifort
+# compilation flag
+# cflag=-fPIC
 
  #}}}
 ####{{{ variable
 
 clearmode=0
 quietmode=0
-skipcheck=0
 curpath=
 
 #}}}
@@ -95,16 +85,10 @@ while [ $# -gt 0 ]; do
       quietmode=1
       shift
       ;;
-    -s | --skip-check)
-      echo [ skip check ]
-      skipcheck=1
-      shift
-      ;;
     *)
       echo "Unknown option $1"
-      echo "-c --clear       clear directory"
-      echo "-q --quiet       redirect output to file ~/$pkg.log"
-      echo "-s --skip-check  skip checking stage"
+      echo "-c --clear    clear directory"
+      echo "-q --quiet    redirect output to file ~/$pkg.log"
       exit -1
   esac
 done
@@ -120,7 +104,7 @@ for i in $required; do
 done
 
 # ================================================= remove log file
-rm -rf $pkg.log
+rm -rf log
 
 # ================================================= clear option
 if [ $clearmode -gt 0 ]; then
@@ -145,20 +129,14 @@ cd $ramdisk
 
 # ================================================= unzip
 echo Unzipping $pkg...
-rm -rf $pkg
+rm -rf $src
 cm "tar zxf $zip" "untar $zip"
 
 # ================================================= build
 echo Building $pkg...
 cd $src
-cm "env ./configure --prefix=$td" "configure $pkg"
-cm "make" "build $pkg"
-
-# ================================================= check build
-if [ $skipcheck -eq 0 ]; then
-  echo Checking $pkg
-  cm "make check" "$pkg"
-fi
+cm "env CC=mpicc CXX=mpicxx FC=mpifort CFLAGS=$cflag CXXFLAGS=$cflag FFLAGS=$cflag FCFLAGS=$cflag ./configure --enable-parallel --enable-fortran --enable-cxx --enable-unsupported --enable-optimization=high --prefix=$td" "configure $pkg"
+cm "make -j16" "build $pkg"
 
 # ================================================= install
 echo Installing $pkg

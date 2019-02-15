@@ -3,14 +3,14 @@
 ####{{{ parameter
 
 # package name and its version
-pkg=netcdf-fortran-4.4.4-openmpi-intel
-src=netcdf-fortran-4.4.4
+pkg=netcdf-fortran-4.4.5-openmpi-intel
+src=netcdf-fortran-4.4.5
 
 # url of source code
-url=ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.4.tar.gz
+url=https://github.com/Unidata/netcdf-fortran/archive/v4.4.5.tar.gz
 
 # name of downloaded file
-zip=netcdf-fortran-4.4.4.tar.gz
+zip=v4.4.5.tar.gz
 
 # target directory
 td=$HOME/.pkg/$pkg
@@ -45,8 +45,8 @@ cflag=
 export CPPFLAGS=-I$HOME/.pkg/netcdf-4.6.2-openmpi-intel/include 
 export LDFLAGS=-L$HOME/.pkg/netcdf-4.6.2-openmpi-intel/lib
 export CC=mpicc
-export CXX=mpicxx
 export FC=mpifort
+export CXX=mpifort
 
  #}}}
 ####{{{ variable

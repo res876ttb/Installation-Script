@@ -3,14 +3,14 @@
 ####{{{ parameter
 
 # package name and its version
-pkg=netcdf-fortran-4.4.4-openmpi-intel
-src=netcdf-fortran-4.4.4
+pkg=netcdf-4.6.2-openmpi-intel
+src=netcdf-c-4.6.2
 
 # url of source code
-url=ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.4.tar.gz
+url=ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-c-4.6.2.tar.gz
 
 # name of downloaded file
-zip=netcdf-fortran-4.4.4.tar.gz
+zip=netcdf-c-4.6.2.tar.gz
 
 # target directory
 td=$HOME/.pkg/$pkg
@@ -36,17 +36,16 @@ required=" \
   $HOME/.script/env-hdf5-1.10.4-openmpi-intel-parallel.sh \
   $HOME/.script/env-curl-7.60.0.sh \
   $HOME/.script/env-openssl-1.1.0.sh \
-  $HOME/.script/env-netcdf-4.6.2-openmpi-intel.sh \
   $HOME/.script/env-openmpi-3.1.3-intel.sh \
 "
 
 # Compilation flags
-cflag=
-export CPPFLAGS=-I$HOME/.pkg/netcdf-4.6.2-openmpi-intel/include 
-export LDFLAGS=-L$HOME/.pkg/netcdf-4.6.2-openmpi-intel/lib
+export CPPFLAGS=-I$HOME/.pkg/hdf5-1.10.4-openmpi-intel-parallel/include
+export LDFLAGS="-L$HOME/.pkg/hdf5-1.10.4-openmpi-intel-parallel/lib -L$HOME/.pkg/curl-7.60.0/lib"
 export CC=mpicc
-export CXX=mpicxx
-export FC=mpifort
+export FC=mpicxx
+export CXX=mpifort
+
 
  #}}}
 ####{{{ variable
@@ -102,9 +101,8 @@ while [ $# -gt 0 ]; do
       ;;
     *)
       echo "Unknown option $1"
-      echo "-c --clear       clear directory"
-      echo "-q --quiet       redirect output to file ~/$pkg.log"
-      echo "-s --skip-check  skip checking stage"
+      echo "-c --clear    clear directory"
+      echo "-q --quiet    redirect output to file ~/$pkg.log"
       exit -1
   esac
 done
@@ -120,7 +118,7 @@ for i in $required; do
 done
 
 # ================================================= remove log file
-rm -rf $pkg.log
+rm -rf ~/$pkg.log
 
 # ================================================= clear option
 if [ $clearmode -gt 0 ]; then
@@ -145,19 +143,19 @@ cd $ramdisk
 
 # ================================================= unzip
 echo Unzipping $pkg...
-rm -rf $pkg
+rm -rf $src
 cm "tar zxf $zip" "untar $zip"
 
 # ================================================= build
 echo Building $pkg...
 cd $src
-cm "env ./configure --prefix=$td" "configure $pkg"
-cm "make" "build $pkg"
+cm "env CFLAGS=$cflag CXXFLAGS=$cflag FFLAGS=$cflag FCFLAGS=$cflag ./configure --prefix=$td" "configure $pkg"
+cm "make -j16" "build $pkg"
 
 # ================================================= check build
 if [ $skipcheck -eq 0 ]; then
   echo Checking $pkg
-  cm "make check" "$pkg"
+  cm "make check -j16" "check $pkg"
 fi
 
 # ================================================= install

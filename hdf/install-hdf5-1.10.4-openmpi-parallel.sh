@@ -33,7 +33,7 @@ ramdisk=/tmp/ramdisk-$pkg-openmpi-parallel
 required="
   $HOME/.script/env-cmake-3.11.2.sh \
   $HOME/.script/env-zlib-1.2.11.sh \
-  $HOME/.script/env-openmpi-4.0.0.sh \
+  $HOME/.script/env-openmpi-3.1.0.sh \
 "
 
 # compilation flag

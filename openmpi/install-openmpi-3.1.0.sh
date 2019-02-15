@@ -118,6 +118,9 @@ tar zxf $zip
 echo Building $pkg...
 cd $pkg/
 # cm "./configure --prefix=$td CFLAGS=$cflag CXXFLAGS=$cflag FFLAGS=$cflag FCFLAGS=$cflag" "configure $pkg"
+# patch openmpi
+sed -e "1666 a memset(&device->ib_exp_dev_attr, 0, sizeof(device->ib_exp_dev_attr));" opal/mca/btl/openib/btl_openib_component.c > ggg
+mv ggg opal/mca/btl/openib/btl_openib_component.c
 cm "./configure --prefix=$td CFLAGS=$cflag CXXFLAGS=$cflag FFLAGS=$cflag FCFLAGS=$cflag" "configure $pkg"
 cm "make -j16" "build $pkg"
 cm "make install" "install $pkg"

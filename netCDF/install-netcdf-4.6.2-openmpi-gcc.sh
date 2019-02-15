@@ -35,7 +35,7 @@ required=" \
   $HOME/.script/env-hdf5-1.10.4-openmpi-parallel.sh \
   $HOME/.script/env-curl-7.60.0.sh \
   $HOME/.script/env-openssl-1.1.0.sh \
-  $HOME/.script/env-openmpi-4.0.0.sh \
+  $HOME/.script/env-openmpi-3.1.0.sh \
 "
 
 # Compilation flags

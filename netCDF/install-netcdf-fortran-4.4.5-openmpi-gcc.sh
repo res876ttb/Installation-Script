@@ -7,7 +7,7 @@ pkg=netcdf-fortran-4.4.5-openmpi-gcc
 src=netcdf-fortran-4.4.5
 
 # url of source code
-url=ftp://github.com/Unidata/netcdf-fortran/archive/v4.4.5.tar.gz
+url=https://github.com/Unidata/netcdf-fortran/archive/v4.4.5.tar.gz
 
 # name of downloaded file
 zip=v4.4.5.tar.gz
@@ -36,7 +36,7 @@ required=" \
   $HOME/.script/env-curl-7.60.0.sh \
   $HOME/.script/env-openssl-1.1.0.sh \
   $HOME/.script/env-netcdf-4.6.2-openmpi-gcc.sh \
-  $HOME/.script/env-openmpi-4.0.0.sh \
+  $HOME/.script/env-openmpi-3.1.0.sh \
 "
 
 # Compilation flags
